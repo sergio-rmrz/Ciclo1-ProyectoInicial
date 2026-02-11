@@ -1,3 +1,3 @@
-# Lab1-DOPO
+# Proyecto Inicial
 
-Laboratorio 1 DOPO
+Proyecto inicial DOPO
