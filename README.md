@@ -1,3 +1,3 @@
-# Proyecto Inicial - Ciclo 1
+# Ciclo 1 - Proyecto Inicial
 
 Proyecto inicial DOPO (Primer Ciclo)
