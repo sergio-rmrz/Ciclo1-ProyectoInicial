@@ -5,6 +5,8 @@
  * @author Yazid Sánchez - Sergio Ramírez
  * @version 1.0
  */
+
+// holi :D
 public class Cup
 {
     /** Número lógico que identifica el tamaño de la taza */
