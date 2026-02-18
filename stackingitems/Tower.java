@@ -1,4 +1,5 @@
 import java.util.Stack;
+import javax.swing.JOptionPane;
 
 public class Tower 
 {
@@ -36,6 +37,7 @@ public class Tower
             isOK = true;
         }
         else {
+            JOptionPane.showMessageDialog(null, "Esta operación no puede realizarse");
             isOK = false;
         }
     }
