@@ -96,27 +96,51 @@ public class Tower
         return null;
     }
 
-    private void redraw()
-    {
-        int alturaAcumulada = 0;
+    private void redraw(){
 
+        int yActual = baseY;
+        Cup anterior = null;
+    
         for (Cup c : cups) {
-
-            c.makeInvisible(); 
-            int y = baseY - alturaAcumulada;
-            c.setPosition(baseX, y);
+    
+            c.makeInvisible();
+    
+            if (anterior == null) {
+                c.setPosition(baseX, yActual);
+            }
+            else {
+    
+                if (c.getNumber() > anterior.getNumber()) {
+                    // Más grande → se apila completo
+                    yActual -= anterior.getHeight()*5;
+                }
+                else {
+                    // Más pequeña → se mete pero baja el grosor
+                    yActual -= 7;
+                }
+    
+                c.setPosition(baseX, yActual);
+            }
+    
             if (isVisible) {
                 c.makeVisible();
             }
-            alturaAcumulada += c.getHeight();
+    
+            anterior = c;
         }
-
-        if (!lids.isEmpty()) {
+    
+        // ---- TAPA ----
+        if (!lids.isEmpty() && !cups.isEmpty()) {
+    
             Lid topLid = lids.peek();
             topLid.makeInvisible();
-            int yTapa = baseY - alturaAcumulada;
+    
+            Cup topCup = cups.peek();
+    
+            int yTapa = topCup.getYPosition() - topCup.getHeight();
+    
             topLid.setPosition(baseX, yTapa);
-
+    
             if (isVisible) {
                 topLid.makeVisible();
             }

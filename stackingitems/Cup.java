@@ -107,7 +107,7 @@ public class Cup
      * @return Altura en píxeles
      */
     public int getHeight() {
-        return height;
+        return height/5;
     }
     
     /**
@@ -142,14 +142,14 @@ public class Cup
             shape1.changeSize(height, width);
             shape1.changeColor(color);
             shape1.moveHorizontal(esquinaX - 70);
-            shape1.moveVertical(esquinaY - 15);
+            shape1.moveVertical(esquinaY);
             shape1.makeVisible();
             
             shape2 = new Rectangle();
             shape2.changeSize(height - grosor, width - 2 * grosor);
             shape2.changeColor("white");
             shape2.moveHorizontal((esquinaX + grosor) - 70);
-            shape2.moveVertical(esquinaY - 15);
+            shape2.moveVertical(esquinaY);
             shape2.makeVisible();
         }
     }
@@ -162,4 +162,7 @@ public class Cup
         if (shape2 != null) shape2.makeInvisible();
     }
 
+    public int getYPosition() {
+    return yPosition;
+    }
 }
