@@ -111,11 +111,9 @@ public class Tower
             else {
     
                 if (c.getNumber() > anterior.getNumber()) {
-                    // Más grande → se apila completo
                     yActual -= anterior.getHeight()*5;
                 }
                 else {
-                    // Más pequeña → se mete pero baja el grosor
                     yActual -= 7;
                 }
     
