@@ -1,6 +1,7 @@
 import java.util.Stack;
 import javax.swing.JOptionPane;
 
+
 public class Tower 
 {
     private Stack<Cup> cups;
@@ -28,6 +29,18 @@ public class Tower
     public void pushCup(int number, String color)
     {
         Cup nueva = new Cup(number, color);
+        
+        if (repSize(number)) {
+            isOK = false;
+            JOptionPane.showMessageDialog(null, "Error, ya existe una copa con este tamaño. Ingrese otro valor");
+            return;
+        }
+        
+        if (repColor(color)) {
+            isOK = false;
+            JOptionPane.showMessageDialog(null, "Error, ya existe una copa con este color. Ingrese otro color");
+            return;
+        }
 
         if (getHeight() + nueva.getHeight() <= maxHeight) {
 
@@ -37,8 +50,8 @@ public class Tower
             isOK = true;
         }
         else {
-            JOptionPane.showMessageDialog(null, "Esta operación no puede realizarse");
             isOK = false;
+            JOptionPane.showMessageDialog(null, "Esta copa sobrepasa el límite máximo de la torre");
         }
     }
 
@@ -97,11 +110,49 @@ public class Tower
         isOK = false;
         return null;
     }
+    
+    private int getTop(Cup c) {
+        return c.getYPosition() - c.getHeight() * 5;
+    }
+    
+    private Cup getHighestCup(Cup actualMasAlta, Cup candidata) {
 
+        if (actualMasAlta == null) {
+            return candidata;
+        }
+    
+        if (getTop(candidata) < getTop(actualMasAlta)) {
+            return candidata;
+        }
+    
+        return actualMasAlta;
+    }
+    
+    private boolean repSize(int number) {
+
+        for (Cup c : cups) {
+            if (c.getNumber() == number) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean repColor(String color) {
+
+        for (Cup c : cups) {
+            if (c.getColor().equals(color)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     private void redraw(){
 
         int yActual = baseY;
         Cup anterior = null;
+        Cup ultimaExterna = null;
     
         for (Cup c : cups) {
     
@@ -109,16 +160,48 @@ public class Tower
     
             if (anterior == null) {
                 c.setPosition(baseX, yActual);
+                c.setInside(false);
+                ultimaExterna = c;   // La primera siempre es externa
             }
             else {
     
-                if (c.getNumber() > anterior.getNumber()) {
-                    yActual -= anterior.getHeight()*5;
+                if (c.getNumber() > ultimaExterna.getNumber()) {
+
+                    Cup baseApilamiento = null;
+                
+                    for (Cup cupExistente : cups) {
+                
+                        if (cupExistente == c) {
+                            break; // no incluir la actual
+                        }
+                
+                        baseApilamiento = getHighestCup(baseApilamiento, cupExistente);
+                    }
+                
+                    yActual = getTop(baseApilamiento);
+                
+                    c.setInside(false);
+                    ultimaExterna = c;
                 }
                 else {
-                    yActual -= 7;
+
+                    if (anterior.isInside()) {
+                
+                        // Parte superior real de la copa anterior
+                        int topAnterior = anterior.getYPosition()
+                                           - anterior.getHeight() * 5;
+                
+                        // Colocar la nueva apoyada en el borde interno
+                        yActual = topAnterior;
+                    }
+                    else {
+                
+                        // Primera interna del contenedor
+                        yActual = ultimaExterna.getYPosition() - 7;
+                    }
+                
+                    c.setInside(true);
                 }
-    
                 c.setPosition(baseX, yActual);
             }
     
@@ -169,14 +252,18 @@ public class Tower
         }
     }
 
-    public int getHeight()
-    {
+    public int getHeight(){
+
         int total = 0;
-
-        for (Cup c : cups) {
+    
+        for (Cup c : cups){
+            if (c.isInside()) {
+            }
+            else {
             total += c.getHeight();
+            }
         }
-
+    
         return total;
     }
 

@@ -116,7 +116,7 @@ public class Lid
             shape.changeSize(height, width);
             shape.changeColor(color);
             shape.moveHorizontal(esquinaX - 70);
-            shape.moveVertical(esquinaY);
+            shape.moveVertical(esquinaY + 14);
             shape.makeVisible();
         }
     }

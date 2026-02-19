@@ -26,6 +26,8 @@ public class Cup
     /** Indica si la taza tiene tapa */
     private boolean hasLid;
     
+    private boolean inside;
+    
     private static final int PIXEL_POR_CM = 5;
     
     private Rectangle shape1;
@@ -44,6 +46,7 @@ public class Cup
         this.yPosition = 200;
         this.width = calcularHeight(number);
         this.isVisible = false;
+        this.inside = false;
         
         this.hasLid = false; //esto es para indicar que por defecto ninguna copa viene con tapa (Lid)
     }
@@ -109,6 +112,24 @@ public class Cup
     public int getHeight() {
         return height/5;
     }
+    
+    /**
+     * Devuelve el color de la cup
+     * 
+     * @return color de cup
+     */
+    public String getColor() {
+    return color;
+    }
+    
+    public boolean isInside() {
+    return inside;
+    }
+    
+    public void setInside(boolean value) {
+    inside = value;
+    }
+    
     
     /**
      * Establece una nueva posición sin redibujar inmediatamente
