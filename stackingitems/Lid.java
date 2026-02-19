@@ -94,6 +94,15 @@ public class Lid
     }
     
     /**
+     * Devuelve el color de la lid
+     * 
+     * @return color de lid
+     */
+    public String getColor() {
+    return color;
+    }
+    
+    /**
      * Establece una nueva posición sin redibujar de manera inmediata
      * @param x Nueva posición horizontal
      * @param y Nueva posición vertical

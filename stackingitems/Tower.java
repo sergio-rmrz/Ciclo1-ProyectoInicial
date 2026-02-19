@@ -1,19 +1,31 @@
 import java.util.Stack;
 import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Tower 
-{
+{   
+    /** Estructura (optamos por hacerlo en Stacks)*/
     private Stack<Cup> cups;
     private Stack<Lid> lids;
-
+    /** Muestra si la torres es o no visible*/
     private boolean isVisible;
+    
+    /** Indica si la uĺtima acción tuvo exito*/
     private boolean isOK;
 
+    /** Coordenadas en las que quisimos que se dibuje la torre*/
     private int baseX = 130;
     private int baseY = 200;
-
+    
+    /** Limite de altura de la torre*/
     private int maxHeight;
-
+    
+    
+    /**
+     * Constructor de la torre
+     * @param maxHeight Altura máxima permitida 
+     */
     public Tower(int maxHeight)
     {
         cups = new Stack<Cup>();
@@ -24,23 +36,30 @@ public class Tower
         isVisible = false;
         isOK = true;
     }
-
+    
+    /**
+     * Agrega un copa en la torre
+     * Realiza validaciones para que no se repitan ni colores ni tamaños
+     */
     public void pushCup(int number, String color)
     {
         Cup nueva = new Cup(number, color);
         
+        // Revisa que no existan tamaños repetidos
         if (repSize(number)) {
             isOK = false;
             JOptionPane.showMessageDialog(null, "Error, ya existe una copa con este tamaño. Ingrese otro valor");
             return;
         }
         
+        //  Revisa que no existan colores repetidos 
         if (repColor(color)) {
             isOK = false;
             JOptionPane.showMessageDialog(null, "Error, ya existe una copa con este color. Ingrese otro color");
             return;
         }
-
+        
+        // Revisa que no se pase el limite de altura de la torre
         if (getHeight() + nueva.getHeight() <= maxHeight) {
 
             cups.push(nueva);
@@ -54,6 +73,10 @@ public class Tower
         }
     }
 
+    
+    /**
+     * Elimina la última copa que se colocó
+     */
     public Cup popCup()
     {
         if (!cups.isEmpty()) {
@@ -75,6 +98,9 @@ public class Tower
         return null;
     }
 
+    /**
+     * Agrega tapas a la torre sobre una copa
+     */
     public void pushLid(String color)
     {
         if (!cups.isEmpty()) {
@@ -94,6 +120,9 @@ public class Tower
         }
     }
 
+    /**
+     * Elimina la última tapa que se colocó
+     */        
     public Lid popLid()
     {
         if (!lids.isEmpty()) {
@@ -110,10 +139,16 @@ public class Tower
         return null;
     }
     
+    /**
+     * Calcula el top (o el más alto) en la torre
+     */
     private int getTop(Cup c) {
         return c.getYPosition() - c.getHeight() * 5;
     }
     
+    /**
+     * Calcula entre dos copas quien es la más alta
+     */
     private Cup getHighestCup(Cup actualMasAlta, Cup candidata) {
 
         if (actualMasAlta == null) {
@@ -127,6 +162,9 @@ public class Tower
         return actualMasAlta;
     }
     
+    /**
+     * Verifica si ya existe una copa con el tamaño ingresado
+     */
     private boolean repSize(int number) {
 
         for (Cup c : cups) {
@@ -137,6 +175,9 @@ public class Tower
         return false;
     }
     
+    /**
+     * Verifica si ya existe una copa con el color ingresado
+     */
     private boolean repColor(String color) {
 
         for (Cup c : cups) {
@@ -147,6 +188,9 @@ public class Tower
         return false;
     }
     
+    /**
+     * Realiza una verificacion de donde van las copas, si van por dentro o por fuera según sus tamaños, también las "coloca" en la torre
+     */
     private void redraw(){
 
         int yActual = baseY;
@@ -197,45 +241,91 @@ public class Tower
     
             Lid topLid = lids.peek();
             topLid.makeInvisible();
-    
             Cup topCup = cups.peek();
-    
             int yTapa = topCup.getYPosition() - topCup.getHeight();
-    
             topLid.setPosition(baseX, yTapa);
-    
             if (isVisible) {
                 topLid.makeVisible();
             }
         }
     }
 
+    /**
+     * Dibuja la regla guía de la tore
+     */
     public void drawRule()
     {
         int escala = 5;
 
         for (int i = 0; i <= maxHeight; i++) {
-
             Rectangle r = new Rectangle();
-
             if (i % 5 == 0) {
                 r.changeSize(2, 20);
             } else {
                 r.changeSize(2, 10);
             }
-
             r.moveHorizontal(baseX - 200);
             r.moveVertical(baseY - (i * escala));
-
             r.changeColor("black");
             r.makeVisible();
         }
     }
-
-    public int getHeight(){
-
-        int total = 0;
     
+    /**
+     * Se remuveve la copa ingresada según su número, en caso de que no sea posible, se manda una notificación de error
+     */
+    public void removeCup(int number) {
+
+        if (cups.isEmpty()) {
+            isOK = false;
+            JOptionPane.showMessageDialog(null, "La torre está vacía");
+            return;
+        }
+    
+        for (int i = 0; i < cups.size(); i++) {
+            if (cups.get(i).getNumber() == number) {
+                cups.get(i).makeInvisible();
+                cups.remove(i);
+                redraw();
+                isOK = true;
+                return;
+            }
+        }
+        isOK = false;
+        JOptionPane.showMessageDialog(null, "No hay una cup con este tamaño en esta torre :(");
+    }
+    
+    
+    /**
+     * Se remuveve la tapa ingresada según su número, en caso de que no sea posible, se manda una notificación de error
+     */
+    public void removeLid(String color) {
+
+        if (lids.isEmpty()) {
+            isOK = false;
+            JOptionPane.showMessageDialog(null,"No hay tapas en la torre");
+            return;
+        }
+    
+        for (int i = 0; i < lids.size(); i++) {
+    
+            if (lids.get(i).getColor().equals(color)) {
+                lids.get(i).makeInvisible();
+                lids.remove(i);
+                redraw();
+                isOK = true;
+                return;
+            }
+        }
+        isOK = false;
+        JOptionPane.showMessageDialog(null,"No existe una tapa con ese color");
+    }
+    
+    /**
+     * Obtiene la altura de la torre
+     */
+    public int getHeight(){
+        int total = 0;
         for (Cup c : cups){
             if (c.isInside()) {
             }
@@ -243,17 +333,66 @@ public class Tower
             total += c.getHeight();
             }
         }
-    
         return total;
     }
-
+    
+    /**
+     * Oderna la torre de menor a mayor (de arriba a abajo en este caso)
+     */
+    public void orderTower() {
+        ArrayList<Cup> lista = new ArrayList<Cup>();
+        for (Cup c : cups) {
+            lista.add(c);
+            c.makeInvisible();
+        }
+        Collections.sort(lista, Collections.reverseOrder(
+            (c1, c2) -> c1.getNumber() - c2.getNumber()));
+        cups.clear();
+        int altura = 0;
+        for (Cup c : lista) {
+            if (altura + c.getHeight() <= maxHeight) {
+                cups.push(c);
+                altura += c.getHeight();
+            }
+        }
+        redraw();
+    }
+    
+    /**
+     * Coloca la torre al revés de como se encuentra
+     */
+    public void reverseTower() {
+        ArrayList<Cup> lista = new ArrayList<Cup>();
+        for (Cup c : cups) {
+            lista.add(c);
+            c.makeInvisible();
+        }
+        Collections.reverse(lista);
+        cups.clear();
+        int altura = 0;
+        for (Cup c : lista) {
+    
+            if (altura + c.getHeight() <= maxHeight) {
+                cups.push(c);
+                altura += c.getHeight();
+            }
+        }
+        redraw();
+    }
+    
+    /**
+     * Hace visible la torre
+     */
     public void makeVisible()
     {
         isVisible = true;
         redraw();
         drawRule();
     }
-
+    
+    /**
+     * Hace invisible la torre
+     */
     public void makeInvisible()
     {
         for (Cup c : cups) {
@@ -267,11 +406,17 @@ public class Tower
         isVisible = false;
     }
 
+    /**
+     * Se comprueba si la última acción fue correcta
+     */
     public boolean isOk()
     {
         return isOK;
     }
 
+    /**
+     * Se hace un "reset" de la torre
+     */
     public void exit()
     {
         makeInvisible();
