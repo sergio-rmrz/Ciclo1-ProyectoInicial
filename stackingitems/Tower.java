@@ -1,7 +1,6 @@
 import java.util.Stack;
 import javax.swing.JOptionPane;
 
-
 public class Tower 
 {
     private Stack<Cup> cups;
@@ -153,66 +152,47 @@ public class Tower
         int yActual = baseY;
         Cup anterior = null;
         Cup ultimaExterna = null;
-    
         for (Cup c : cups) {
-    
             c.makeInvisible();
-    
             if (anterior == null) {
                 c.setPosition(baseX, yActual);
                 c.setInside(false);
-                ultimaExterna = c;   // La primera siempre es externa
+                ultimaExterna = c;
             }
             else {
-    
                 if (c.getNumber() > ultimaExterna.getNumber()) {
-
                     Cup baseApilamiento = null;
-                
                     for (Cup cupExistente : cups) {
                 
                         if (cupExistente == c) {
-                            break; // no incluir la actual
+                            break; 
                         }
-                
                         baseApilamiento = getHighestCup(baseApilamiento, cupExistente);
                     }
-                
                     yActual = getTop(baseApilamiento);
-                
                     c.setInside(false);
                     ultimaExterna = c;
                 }
                 else {
-
                     if (anterior.isInside()) {
-                
-                        // Parte superior real de la copa anterior
-                        int topAnterior = anterior.getYPosition()
-                                           - anterior.getHeight() * 5;
-                
-                        // Colocar la nueva apoyada en el borde interno
+        
+                        int topAnterior = anterior.getYPosition() - anterior.getHeight() * 5;
                         yActual = topAnterior;
                     }
                     else {
-                
-                        // Primera interna del contenedor
                         yActual = ultimaExterna.getYPosition() - 7;
                     }
-                
                     c.setInside(true);
                 }
                 c.setPosition(baseX, yActual);
             }
-    
             if (isVisible) {
                 c.makeVisible();
             }
-    
             anterior = c;
         }
     
-        // ---- TAPA ----
+        // PARTE DE LA TAPA
         if (!lids.isEmpty() && !cups.isEmpty()) {
     
             Lid topLid = lids.peek();
